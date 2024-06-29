@@ -17,7 +17,7 @@ LIBRARY_PATH = Rf"{APPDATA}\Ridibooks\library"
 settings = {}
 
 
-def get_device_id():
+def get_user_info():
     api_url = "https://account.ridibooks.com/api/user-devices/app"
     print("Device id not found. Attempting to detect device id...")
     try:
@@ -191,7 +191,7 @@ def load_settings():
         json.dump(settings, wf)
 
     if not settings.get("device_id", None):
-        settings["device_id"] = get_device_id()
+        settings["device_id"] = get_user_info()
 
     with open("settings.json", "w") as wf:
         json.dump(settings, wf)
