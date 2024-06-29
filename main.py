@@ -15,21 +15,11 @@ import sys
 APPDATA = os.getenv("APPDATA")
 LIBRARY_PATH = Rf"{APPDATA}\Ridibooks\library"
 settings = {}
-
+api_url = "https://account.ridibooks.com/api/user-devices/app"
 
 def get_user_info():
-    api_url = "https://account.ridibooks.com/api/user-devices/app"
     print("Device id not found. Attempting to detect device id...")
-    try:
-        cj = browser_cookie3.chrome()
-    except:
-        try:
-            cj = browser_cookie3.firefox()
-        except:
-            print("Unable to import cookies from browsers")
-            print(f"Please visit {api_url} to manually retrieve device_id")
-            print("and add it to settings.json")
-            quit()
+    cj = get_cookie_jar()
     api_response = requests.get(api_url, cookies=cj)
     print(api_response.status_code)
     if str(api_response.status_code) != "200":
@@ -48,6 +38,19 @@ def get_user_info():
     else:
         print("No device_id found. Is ridibooks installed on this machine?")
         quit()
+
+def get_cookie_jar():
+    try:
+        cj = browser_cookie3.chrome()
+    except:
+        try:
+            cj = browser_cookie3.firefox()
+        except:
+            print("Unable to import cookies from browsers")
+            print(f"Please visit {api_url} to manually retrieve device_id")
+            print("and add it to settings.json")
+            quit()
+    return cj
 
 def list_usercodes():
     directory_list = glob.glob(f"{LIBRARY_PATH}\\*\\")
