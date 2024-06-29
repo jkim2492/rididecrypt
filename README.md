@@ -23,6 +23,8 @@
 
 A command-line tool to remove DRM from `epub` files from a "specific website"
 
+Currently only supports Windows
+
 ### Built With
 
 * Hatred for DRM
