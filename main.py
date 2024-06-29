@@ -14,6 +14,7 @@ import sys
 
 APPDATA = os.getenv("APPDATA")
 LIBRARY_PATH = Rf"{APPDATA}\Ridibooks\library"
+settings = {}
 
 
 def get_device_id():
@@ -173,6 +174,32 @@ def decypt_epub(epub_path, dat_path):
     return dest_dir
 
 
+def load_settings():
+    global usercode, device_id, settings
+
+    if not os.path.isfile("settings.json"):
+        with open("settings.json", "w") as wf:
+            wf.write("{}")
+
+    with open("settings.json") as rf:
+        settings = json.load(rf)
+
+    if not settings.get("usercode", None):
+        settings["usercode"] = get_usercode()
+
+    with open("settings.json", "w") as wf:
+        json.dump(settings, wf)
+
+    if not settings.get("device_id", None):
+        settings["device_id"] = get_device_id()
+
+    with open("settings.json", "w") as wf:
+        json.dump(settings, wf)
+
+    usercode = settings["usercode"]
+    device_id = settings["device_id"]
+
+
 def usage():
     exec_path = sys.argv[0]
     print("Usage:")
@@ -203,29 +230,7 @@ def list_books():
 
 
 def main():
-    global usercode, device_id
-
-    if not os.path.isfile("settings.json"):
-        with open("settings.json", "w") as wf:
-            wf.write("{}")
-
-    with open("settings.json") as rf:
-        settings = json.load(rf)
-
-    if not settings.get("usercode", None):
-        settings["usercode"] = get_usercode()
-
-    with open("settings.json", "w") as wf:
-        json.dump(settings, wf)
-
-    if not settings.get("device_id", None):
-        settings["device_id"] = get_device_id()
-
-    with open("settings.json", "w") as wf:
-        json.dump(settings, wf)
-
-    usercode = settings["usercode"]
-    device_id = settings["device_id"]
+    load_settings()
 
     args = sys.argv
     if len(args) != 2:
@@ -233,7 +238,7 @@ def main():
         quit()
 
     book_dir = args[1]
-    book_code=os.path.basename(os.path.normpath(book_dir))
+    book_code = os.path.basename(os.path.normpath(book_dir))
     epub_path = glob.glob(Rf"{book_dir}\{book_code}*.epub")[0]
     dat_path = glob.glob(Rf"{book_dir}\{book_code}*.dat")[0]
     dest_dir = decypt_epub(epub_path, dat_path)
