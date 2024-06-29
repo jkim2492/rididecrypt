@@ -178,12 +178,11 @@ def decypt_epub(epub_path, dat_path):
 def load_settings():
     global usercode, device_id, settings
 
-    if not os.path.isfile("settings.json"):
-        with open("settings.json", "w") as wf:
-            wf.write("{}")
-
-    with open("settings.json") as rf:
-        settings = json.load(rf)
+    try:
+        with open("settings.json") as rf:
+            settings = json.load(rf)
+    except:
+        settings = {}
 
     if not settings.get("usercode", None):
         settings["usercode"] = get_usercode()
