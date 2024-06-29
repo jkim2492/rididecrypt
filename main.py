@@ -49,9 +49,10 @@ def get_device_id():
         print("No device_id found. Is ridibooks installed on this machine?")
         quit()
 
-
 def list_usercodes():
-    return glob.glob(LIBRARY_PATH)
+    directory_list = glob.glob(f"{LIBRARY_PATH}\\*\\")
+    usercode_list = [os.path.basename(d[:-1])[1:] for d in directory_list]
+    return usercode_list
 
 
 def get_usercode():
