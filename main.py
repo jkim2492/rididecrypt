@@ -17,11 +17,11 @@ LIBRARY_PATH = Rf"{APPDATA}\Ridibooks\library"
 settings = {}
 api_url = "https://account.ridibooks.com/api/user-devices/app"
 
+
 def get_user_info():
     print("Device id not found. Attempting to detect device id...")
     cj = get_cookie_jar()
     api_response = requests.get(api_url, cookies=cj)
-    print(api_response.status_code)
     if str(api_response.status_code) != "200":
         print("Unable to authenticate with Ridibooks")
         print("Please ensure that you are signed in at https://ridibooks.com")
@@ -33,11 +33,17 @@ def get_user_info():
         quit()
     elif len(api_json) == 1:
         device_id = api_json[0]["device_id"]
-        print(f"device_id: {device_id}")
-        return device_id
+        user_id = api_json[0]["user_idx"]
+        data = {
+            "device_id": device_id,
+            "user_id": user_id,
+        }
+        pprint(data)
+        return data
     else:
         print("No device_id found. Is ridibooks installed on this machine?")
         quit()
+
 
 def get_cookie_jar():
     try:
@@ -51,6 +57,7 @@ def get_cookie_jar():
             print("and add it to settings.json")
             quit()
     return cj
+
 
 def list_usercodes():
     directory_list = glob.glob(f"{LIBRARY_PATH}\\*\\")
@@ -187,14 +194,16 @@ def load_settings():
     except:
         settings = {}
 
-    if not settings.get("usercode", None):
-        settings["usercode"] = get_usercode()
+    if not settings.get("device_id", None):
+        user_info = get_user_info()
+        settings["device_id"] = user_info["device_id"]
+        settings["usercode"] = user_info["user_id"]
 
     with open("settings.json", "w") as wf:
         json.dump(settings, wf)
 
-    if not settings.get("device_id", None):
-        settings["device_id"] = get_user_info()
+    if not settings.get("usercode", None):
+        settings["usercode"] = get_usercode()
 
     with open("settings.json", "w") as wf:
         json.dump(settings, wf)
