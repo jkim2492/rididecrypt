@@ -21,7 +21,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-A command-line tool to remove DRM from `epub` files from a "specific website"
+A command-line tool to remove DRM of comic books or `epub` files from a "specific website"
 
 Currently only supports Windows
 
@@ -29,6 +29,7 @@ Currently only supports Windows
 
 * Hatred for DRM
 * Frustration from "specific website" not having a linux client
+* Python
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -42,7 +43,7 @@ Currently only supports Windows
    pip install -r requirements.txt
    ```
 3. Log in to your account at `r***books.com` and install their PC client
-4. Download `epub` files with their PC client
+4. Download comic books or `epub` files with their PC client
 5. Initialize the script by running it without any arguments
    ```sh
    python main.py
@@ -54,11 +55,12 @@ To decrypt an `epub` file located at `%appdata%\R***books\library\<user_code>\<b
    ```sh
    python main.py %appdata%\R***books\library\<user_code>\<book_code>
    ```
+Similarly, to decrypt a comic book `zip` file located at `%appdata%\R***books\library\<user_code>\<book_code>\$book_code.zip`, pass the `dirname` as the argument, as above
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add option to decrypt comic books
-- [ ] List all available books
+- [ ] Add option to decrypt comic books -- Done! ✅
+- [ ] Interactive mode
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 
