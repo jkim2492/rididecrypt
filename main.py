@@ -216,7 +216,10 @@ def usage():
     exec_path = sys.argv[0]
     print("Usage:")
     print(f"    {exec_path} [path_to_book_directory]")
-    print(f"Book directories are under {LIBRARY_PATH}")
+    _usercode = usercode
+    if not usercode:
+        _usercode = "<user code>"
+    print(fR"Book directories are under {LIBRARY_PATH}\{_usercode}")
 
 
 # unused for now
