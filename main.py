@@ -172,7 +172,7 @@ def clean_xml(xml_path):
         content = wf.write(soup.prettify())
 
 
-def decypt_epub(epub_path, dat_path):
+def decrypt_epub(epub_path, dat_path):
     epub_path = os.path.abspath(epub_path)
     dat_path = os.path.abspath(dat_path)
 
@@ -256,7 +256,7 @@ def main():
     book_code = os.path.basename(os.path.normpath(book_dir))
     epub_path = glob.glob(Rf"{book_dir}\{book_code}*.epub")[0]
     dat_path = glob.glob(Rf"{book_dir}\{book_code}*.dat")[0]
-    dest_dir = decypt_epub(epub_path, dat_path)
+    dest_dir = decrypt_epub(epub_path, dat_path)
 
     print(f"Decrypted epub can be found at {dest_dir}")
 
