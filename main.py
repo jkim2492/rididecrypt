@@ -100,6 +100,11 @@ def list_files(dir_path):
     return [entry for entry in entries if os.path.isfile(entry)]
 
 
+def is_comic(book_dir):
+    pattern = os.path.join(book_dir, "*.epub")
+    return len(list(glob.glob(pattern))) == 0
+
+
 def decrypt_file(secret_key, file_path):
     with open(file_path, "rb") as infile:
         iv = infile.read(16)
@@ -185,6 +190,29 @@ def decrypt_epub(epub_path, dat_path):
     return dest_dir
 
 
+def unpack_comic(comic_dir):
+    zip_path = glob.glob(os.path.join(comic_dir, "*.zip"))[0]
+    unpack_dir = os.path.join(comic_dir, "decrypted")
+
+    if not os.path.exists(unpack_dir):
+        os.makedirs(unpack_dir)
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        zf.extractall(unpack_dir)
+
+    rmf(os.path.join(unpack_dir, "zzzzzzzzzz"))
+    return unpack_dir
+
+
+def decrypt_comic(comic_dir):
+    dest_dir = unpack_comic(comic_dir)
+    secret_key = device_id[2:18].encode()
+    img_list = glob.glob(os.path.join(dest_dir, "*.jpg"))
+    for encrypted_img in img_list:
+        decrypt_file(secret_key, encrypted_img)
+    return dest_dir
+
+
 def load_settings():
     global usercode, device_id, settings
 
@@ -219,7 +247,7 @@ def usage():
     _usercode = usercode
     if not usercode:
         _usercode = "<user code>"
-    print(fR"Book directories are under {LIBRARY_PATH}\{_usercode}")
+    print(Rf"Book directories are under {LIBRARY_PATH}\{_usercode}")
 
 
 # unused for now
@@ -254,11 +282,15 @@ def main():
 
     book_dir = args[1]
     book_code = os.path.basename(os.path.normpath(book_dir))
-    epub_path = glob.glob(Rf"{book_dir}\{book_code}*.epub")[0]
-    dat_path = glob.glob(Rf"{book_dir}\{book_code}*.dat")[0]
-    dest_dir = decrypt_epub(epub_path, dat_path)
 
-    print(f"Decrypted epub can be found at {dest_dir}")
+    if is_comic(book_dir):
+        dest_dir = decrypt_comic(book_dir)
+    else:
+        epub_path = glob.glob(Rf"{book_dir}\{book_code}*.epub")[0]
+        dat_path = glob.glob(Rf"{book_dir}\{book_code}*.dat")[0]
+        dest_dir = decrypt_epub(epub_path, dat_path)
+
+    print(f"Decrypted book can be found at {dest_dir}")
 
 
 if __name__ == "__main__":
