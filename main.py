@@ -272,10 +272,15 @@ def process_epub(book_dir):
     dat_path = glob.glob(Rf"{book_dir}\{book_code}*.dat")[0]
     epub_path = os.path.abspath(epub_path)
     dat_path = os.path.abspath(dat_path)
-
     secret_key = get_key(device_id, dat_path)
-    unpack_dir = unpack_epub(epub_path)
-    decrypt_dir(secret_key, unpack_dir)
+
+    if zipfile.is_zipfile(epub_path):
+        unpack_dir = unpack_epub(epub_path)
+        decrypt_dir(secret_key, unpack_dir)
+    else:
+        decrypt_file(secret_key, epub_path)
+        unpack_dir = unpack_epub(epub_path)
+
     dest_dir = pack_epub(unpack_dir)
     rmtree(unpack_dir)
 
