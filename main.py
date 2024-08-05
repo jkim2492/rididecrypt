@@ -11,6 +11,7 @@ import json
 import requests
 import browser_cookie3
 import sys
+import re
 
 APPDATA = os.getenv("APPDATA")
 LIBRARY_PATH = Rf"{APPDATA}\Ridibooks\library"
@@ -126,8 +127,18 @@ def decrypt_dir(secret_key, dir_path):
             clean_xml(file_path)
 
 
+def sanitize(text):
+    illegal_chars = R'<>:"/\|?*'
+    pattern_list = [re.escape(c) for c in illegal_chars]
+    pattern = "|".join(pattern_list)
+    text = re.sub(pattern, " ", text)
+    text = re.sub(R"\s+", " ", text)
+    return text
+
+
 def get_title(soup):
-    return soup.title.text.strip()
+    title = soup.title.text.strip()
+    return sanitize(title)
 
 
 def unpack_epub(epub_path):
